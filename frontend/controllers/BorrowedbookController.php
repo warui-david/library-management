@@ -3,18 +3,16 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\models\Student;
-use frontend\models\StudentSearch;
+use frontend\models\Borrowedbook;
+use frontend\models\BorrowedbookSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\ForbiddenHttpException;
-
 
 /**
- * StudentController implements the CRUD actions for Student model.
+ * BorrowedbookController implements the CRUD actions for Borrowedbook model.
  */
-class StudentController extends Controller
+class BorrowedbookController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,22 +30,24 @@ class StudentController extends Controller
     }
 
     /**
-     * Lists all Student models.
+     * Lists all Borrowedbook models.
      * @return mixed
      */
+    
     public function actionIndex()
     {
-        $searchModel = new StudentSearch();
+        $searchModel = new BorrowedBookSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+    
+    
 
     /**
-     * Displays a single Student model.
+     * Displays a single Borrowedbook model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -60,26 +60,35 @@ class StudentController extends Controller
     }
 
     /**
-     * Creates a new Student model.
+     * Creates a new Borrowedbook model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+
+    
     public function actionCreate()
     {
-        $model = new Student();
-        
+        $model = new BorrowedBook();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->student]);
+            if($this->bookUpdate($model->bookId)){
+                return $this->redirect(['index']);
+            }
         }
-        
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
     
+    public function bookUpdate($bookId){
+        $command = \Yii::$app->db->createCommand('UPDATE book SET status=1 WHERE bookId='.$bookId);
+        $command->execute();
+        return true;
+    }
+    
+
 
     /**
-     * Updates an existing Student model.
+     * Updates an existing Borrowedbook model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -90,7 +99,7 @@ class StudentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->student]);
+            return $this->redirect(['view', 'id' => $model->bbId]);
         }
 
         return $this->render('update', [
@@ -99,7 +108,7 @@ class StudentController extends Controller
     }
 
     /**
-     * Deletes an existing Student model.
+     * Deletes an existing Borrowedbook model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -107,21 +116,43 @@ class StudentController extends Controller
      */
     public function actionDelete($id)
     {
+        $bookId = BorrowedBook::find()->where(['bbId'=>$id])->one();
         $this->findModel($id)->delete();
-
+        $this->updateAfterDelete($bookId->bookId);
         return $this->redirect(['index']);
     }
+    
+    public function updateAfterDelete($bookId){
+        $command = \Yii::$app->db->createCommand('UPDATE book SET status=0 WHERE bookId='.$bookId);
+        $command->execute();
+        return true;
+    }
+    
+    public function actionReturnbook($id)
+    {
+        $model = $this->findModel($id);
+        
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->updateAfterDelete($model->bookId);
+            return $this->redirect(['index']);
+        }
+        
+        return $this->renderAjax('returnbook', [
+            'model' => $model,
+        ]);
+    }
+    
 
     /**
-     * Finds the Student model based on its primary key value.
+     * Finds the Borrowedbook model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Student the loaded model
+     * @return Borrowedbook the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Student::findOne($id)) !== null) {
+        if (($model = Borrowedbook::findOne($id)) !== null) {
             return $model;
         }
 

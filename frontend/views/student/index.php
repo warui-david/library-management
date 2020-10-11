@@ -1,4 +1,5 @@
 <?php
+use frontend\models\Student;
 use yii\helpers\Html;
 use yii\grid\GridView;
 /* @var $this yii\web\View */
@@ -29,15 +30,38 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-                    'student_id',
-                    'user_id',
-                    'id_number',
-                    'full_name',
-                    'reg_number',
-                    ['class' => 'yii\grid\ActionColumn'],
+                    [
+                        'attribute' => 'studentId',
+                        'value' => function ($dataProvider) {
+                        $studentName = Student::find()->where(['student'=>$dataProvider->student])->One();
+                        return $studentName->student;
+                        },
+                        ],
+                        [
+                            'attribute' => 'studentId',
+                            'value' => function ($dataProvider) {
+                            $studentName = Student::find()->where(['student'=>$dataProvider->student])->One();
+                            return $studentName->fullName;
+                            },
+                            ],
+                        [
+                            'attribute' => 'idNumber',
+                            'value' => function ($dataProvider) {
+                            $studentName = Student::find()->where(['student'=>$dataProvider->student])->One();
+                            return $studentName->idNumber;
+                            },
+                            ],
+                            
+                                [
+                                    'attribute' => 'Reg Number',
+                                    'value' => function ($dataProvider) {
+                                    $studentName = Student::find()->where(['student'=>$dataProvider->student])->One();
+                                    return $studentName->regNo;
+                                    },
+                                    ],['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>
             </div>
             <!-- /.box-body -->
                   <!-- /.box-footer -->
-          </div>
+         

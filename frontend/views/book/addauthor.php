@@ -9,7 +9,10 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="addauthor">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+            'action' =>['book/addauthor'],
+            'method'=>'post',
+        ]); ?>
 
         <?= $form->field($model, 'authorName') ?>
     

@@ -123,7 +123,9 @@ $students = Student::find()->asArray()->all();
           </div>
           <!-- /.box -->
         </div>
-      </div>    
+      </div>
+      
+        
 <?php
         Modal::begin([
             'header'=>'<h4>Assign A Book</h4>',

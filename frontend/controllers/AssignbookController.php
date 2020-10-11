@@ -10,16 +10,13 @@ class AssignbookController extends \yii\web\Controller
     {
         return $this->render('index');
     }
-    public function actionAssignbook()//this function is given when generating a form//
+    
+    public function actionAssignbook()
     {
         $model = new \frontend\models\Borrowedbook();
         
-        if ($model->load(\Yii::$app->request->post())) {
-            if ($model->validate() && $model->save())
-            {
-                // form inputs are valid, do something here
-                return;
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['site/index']);
         }
         
         return $this->renderAjax('assignbook', [
@@ -27,3 +24,5 @@ class AssignbookController extends \yii\web\Controller
         ]);
     }
 }
+
+

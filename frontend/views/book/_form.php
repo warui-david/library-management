@@ -12,10 +12,7 @@ $authors = ArrayHelper::map(Author::find()->all(), 'authorId', 'authorName');
 <div class="row">
     <div class="book-form">
     
-<?php $form = ActiveForm::begin([
-            'action' =>['book/addauthor'],
-            'method'=>'post',
-        ]); ?>   
+<?php $form = ActiveForm::begin(); ?>   
  		<div class="col-xs-12">
         <?= $form->field($model, 'bookName')->textInput(['maxlength' => true,'placeholder'=>'Input Book Name'])->label(false)?>
         </div>

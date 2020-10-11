@@ -6,7 +6,7 @@
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p><?=Yii::$app->user->identity->username?></p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -21,6 +21,7 @@
             </div>
         </form>
         <!-- /.search form -->
+ <?php if (Yii::$app->user->can('admin')){?>        
         <?= dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
@@ -62,5 +63,35 @@
                 ],
             ]
         ) ?>
+ <?php }?>
+ <?php if (Yii::$app->user->can('student')){?>        
+        <?= dmstr\widgets\Menu::widget(
+            [
+                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
+                'items' => [
+                    ['label' => 'DASHBOARD', 'icon' => 'home', 'url' => ['/site/index']],
+                    ['label' => 'CATALOG', 'icon' => 'book', 'url' => ['/book/index']],
+                ],
+            ]
+            ) ?>
+ <?php }?>
+ 
+ <?php if (Yii::$app->user->can('librarian')){?>        
+        <?= dmstr\widgets\Menu::widget(
+            [
+                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
+                'items' => [
+                    ['label' => 'DASHBOARD', 'icon' => 'home', 'url' => ['/site/index']],
+                    ['label' => 'CATALOG', 'icon' => 'book', 'url' => ['/book/index']],
+                    ['label' => 'STUDENTS', 'icon' => 'users', 'url' => ['/student/index']],
+                    
+                   
+                    ],
+                ],
+            
+        ) ?>
+ <?php }?>
+                
     </section>
+ 
 </aside>

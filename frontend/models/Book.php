@@ -11,6 +11,7 @@ use Yii;
  * @property string $bookName
  * @property string $referenceNo
  * @property string $publisher
+ * @property int $status
  *
  * @property Bookauthor[] $bookauthors
  * @property Borrowedbook[] $borrowedbooks
@@ -32,6 +33,7 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             [['bookName', 'referenceNo', 'publisher'], 'required'],
+            [['status'], 'integer'],
             [['bookName'], 'string', 'max' => 100],
             [['referenceNo', 'publisher'], 'string', 'max' => 50],
         ];
@@ -47,6 +49,7 @@ class Book extends \yii\db\ActiveRecord
             'bookName' => 'Book Name',
             'referenceNo' => 'Reference No',
             'publisher' => 'Publisher',
+            'status' => 'Status',
         ];
     }
 
