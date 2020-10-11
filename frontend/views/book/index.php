@@ -1,8 +1,11 @@
 <?php
 
+use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\grid\GridView;
-use yii\helpers\Html;
+use yii\widgets\Pjax;
+use frontend\models\Book;
+use frontend\models\BorrowedbookSearch;
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\BookSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -49,7 +52,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         'bookName',
                         'referenceNo',
                         'publisher',
-                        'status',
+                        [
+                            'label'=>'Book Status',
+                            'format' => 'raw',
+                            'value' => function ($dataProvider) {
+                            $bookstatus = Book::find()->where(['bookId'=>$dataProvider->bookId])->one();
+                            if($bookstatus->status == 0){
+                                $status = 'Available';
+                                return '<span class="btn btn-info">'.$status.'</span>';
+                            }elseif ($bookstatus->status == 1) {
+                                $status = 'Issued';
+                                return '<span class="btn btn-success">'.$status.'</span>';
+                            }elseif ($bookstatus->status == 2) {
+                                $status = 'Pending';
+                                return '<span class="btn btn-danger">'.$status.'</span>';
+                            }
+                            // return '<span class="btn btn-info">'.$status.'</span>';
+                            },
+                            ],
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]); ?>

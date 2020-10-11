@@ -11,9 +11,8 @@ use frontend\models\Student;
 $this->title = 'DAVID LMS';
 $this->params['breadcrumbs'][] = $this->title;
 $totalBooks = Book::find()->asArray()->all();
-$borrowedBooks = Borrowedbook::find()->asArray()->all();
-$overdueBooks = Borrowedbook::find()->asArray()->all();
-$students = Student::find()->asArray()->all();
+$borrowedBooks=Borrowedbook::find()->where(['actualReturnDate'=>NULL])->asArray()->all();
+$overdueBooks = BorrowedBook::find()->where('expectedreturndate >'.date('yy/m/d'))->andWhere(['actualreturnDate'=>NULL])->asArray()->all();$students = Student::find()->asArray()->all();
 ?>
 <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -148,7 +147,6 @@ $students = Student::find()->asArray()->all();
                                         },
                                         
                                         ],
-                                        'status',
                                         [
                                             'label'=>'Status',
                                             'format' => 'raw',
