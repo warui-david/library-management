@@ -11,8 +11,15 @@ use frontend\models\Student;
 $this->title = 'DAVID LMS';
 $this->params['breadcrumbs'][] = $this->title;
 $totalBooks = Book::find()->asArray()->all();
-$borrowedBooks=Borrowedbook::find()->where(['actualReturnDate'=>NULL])->asArray()->all();
+if(\Yii::$app->user->can('student')){
+    $studentId = Student::find()->where(['userId'=>\yii::$app->user->id])->one();
+    $borrowedBooks = BorrowedBook::find()->Where(['studentId'=>$studentId->student])->andWhere(['actualreturnDate'=>NULL])->asArray()->all();
+}
+if(\Yii::$app->user->can('librarian')){
+    $borrowedBooks = BorrowedBook::find()->andWhere(['actualreturnDate'=>NULL])->asArray()->all();
+}
 $overdueBooks = BorrowedBook::find()->where('expectedreturndate >'.date('yy/m/d'))->andWhere(['actualreturnDate'=>NULL])->asArray()->all();$students = Student::find()->asArray()->all();
+$students = Student::find()->asArray()->all();
 ?>
 <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -148,21 +155,35 @@ $overdueBooks = BorrowedBook::find()->where('expectedreturndate >'.date('yy/m/d'
                                         
                                         ],
                                         [
-                                            'label'=>'Status',
+                                            'label'=>'Book Status',
                                             'format' => 'raw',
                                             'value' => function ($dataProvider) {
-                                            $bookStatus = Book::find()->where(['bookId'=>$dataProvider->bookId])->One();
-                                            if($bookStatus->status == 0){
+                                            $bookstatus = Book::find()->where(['bookId'=>$dataProvider->bookId])->one();
+                                            if($bookstatus->status == 0){
                                                 $status = 'Available';
-                                            }elseif ($bookStatus->status == 1){
+                                                return '<span class="btn btn-info">'.$status.'</span>';
+                                            }elseif ($bookstatus->status == 1) {
                                                 $status = 'Issued';
-                                            }elseif ($bookStatus->status == 2){
+                                                return '<span class="btn btn-success">'.$status.'</span>';
+                                            }elseif ($bookstatus->status == 2) {
                                                 $status = 'Pending';
+                                                return '<span class="btn btn-warning">'.$status.'</span>';
                                             }
-                                            return '<span class="btn btn-info">'.$status.'</span>';
+                                            // return '<span class="btn btn-info">'.$status.'</span>';
                                             },
-                                            
                                             ],
+                                            [
+                                                'label'=>'Approve Books',
+                                                'format' => 'raw',
+                                                'value' => function ($dataProvider) {
+                                                $bookStatus = Book::find()->where(['bookId'=>$dataProvider->bookId])->One();
+                                                if(\Yii::$app->user->can('librarian') && $bookStatus->status == 2){
+                                                    return Html::a('Approve', ['approve','id'=>$dataProvider->bookId,'studentId'=>$dataProvider->studentId], ['class' => 'btn btn-success']);
+                                                }
+                                                return '';
+                                                },
+                                                ],
+                                                
                                             
                                             ['class' => 'yii\grid\ActionColumn'],
                                             ],
@@ -273,7 +294,7 @@ $overdueBooks = BorrowedBook::find()->where('expectedreturndate >'.date('yy/m/d'
                                     return $date->format('F j, Y,');
                                     },
                                     ],
-                                        'status',
+                                        
                                         [
                                             'label'=>'Status',
                                             'format' => 'raw',

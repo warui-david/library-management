@@ -41,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
               </div>
             </div>
             <!-- /.box-header -->
+            <?php if (Yii::$app->user->can('librarian')){?>
             <div class="box-body">
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
@@ -65,17 +66,62 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return '<span class="btn btn-success">'.$status.'</span>';
                             }elseif ($bookstatus->status == 2) {
                                 $status = 'Pending';
-                                return '<span class="btn btn-danger">'.$status.'</span>';
+                                // return Html::a('Approve', ['approve','id'=>$dataProvider->book_id,'studentId'=>$dataProvider->student_id], ['class' => 'btn btn-success']);
+                                return '<span val="'.$dataProvider->bookId.'" class="btn btn-danger approvebook">'.$status.'</span>';
                             }
                             // return '<span class="btn btn-info">'.$status.'</span>';
                             },
                             ],
+                            
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]); ?>
             </div>
+            
             <!-- /.box-body -->
           </div>
+          <?php }?>
+            <?php if (Yii::$app->user->can('student')){?>
+            <div class="box-body">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+            
+                        'bookId',
+                        'bookName',
+                        'referenceNo',
+                        'publisher',
+                        [
+                            'label'=>'Book Status',
+                            'format' => 'raw',
+                            'value' => function ($dataProvider) {
+                            $bookstatus = Book::find()->where(['bookId'=>$dataProvider->bookId])->one();
+                            if($bookstatus->status == 0){
+                                $status = 'Available';
+                                return '<span class="btn btn-info">'.$status.'</span>';
+                            }elseif ($bookstatus->status == 1) {
+                                $status = 'Issued';
+                                return '<span class="btn btn-success">'.$status.'</span>';
+                            }elseif ($bookstatus->status == 2) {
+                                $status = 'Pending';
+                                return '<span class="btn btn-success">'.$status.'</span>';
+                            }
+                                
+                            },
+                            // return '<span class="btn btn-info">'.$status.'</span>';
+
+                            ],
+                            
+                        ['class' => 'yii\grid\ActionColumn'],
+                    ],
+                ]); ?>
+            </div>
+            
+            <!-- /.box-body -->
+          </div>
+          <?php }?>
 <?php
         Modal::begin([
             'header'=>'<h4>Borrow A Book</h4>',
@@ -84,4 +130,5 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
         echo "<div id='borrowbookContent'></div>";
         Modal::end();
-      ?>   
+      ?>  
+      

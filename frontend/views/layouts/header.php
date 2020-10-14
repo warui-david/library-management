@@ -1,22 +1,12 @@
 <?php
-use machour\yii2\notifications\widgets\NotificationsWidget;
+
+use frontend\models\Notification;
 use yii\bootstrap\Html;
 
 
 
 ?>
-<?php NotificationsWidget::widget([
-    'theme' => NotificationsWidget::THEME_GROWL,
-    'clientOptions' => [
-        'location' => 'br',
-    ],
-    'counters' => [
-        '.notifications-header-count',
-        '.notifications-icon-count'
-    ],
-    'markAllSeenSelector' => '#notification-seen-all',
-    'listSelector' => '#notifications',
-]);
+
 ?>
 <header class="main-header">
 
@@ -114,48 +104,31 @@ use yii\bootstrap\Html;
                         <li class="footer"><a href="#">See All Messages</a></li>
                     </ul>
                 </li>
+                <?php 
+                    $notifications = Notification::find()->where(['userId'=>Yii::$app->user->id])->all();
+                ?>
                 <li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">10</span>
+                        <span class="label label-warning"><?= count($notifications)?></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 10 notifications</li>
+                        <li class="header">You have <?= count($notifications)?> notifications</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">
+                            <?php foreach ($notifications as $notification) { ?>
                                 <li>
                                     <a href="#">
-                                        <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                                        <i class="<?= $notification->icon ?>"></i> <?=$notification->message?>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-warning text-yellow"></i> Very long description here that may
-                                        not fit into the page and may cause design problems
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-users text-red"></i> 5 new members joined
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-user text-red"></i> You changed your username
-                                    </a>
-                                </li>
+                           <?php }?>
                             </ul>
                         </li>
                         <li class="footer"><a href="#">View all</a></li>
                     </ul>
-                </li>
+                
                 <!-- Tasks: style can be found in dropdown.less -->
                 <li class="dropdown tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

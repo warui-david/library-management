@@ -5,10 +5,11 @@ namespace frontend\controllers;
 use Yii;
 use frontend\models\Borrowedbook;
 use frontend\models\BorrowedbookSearch;
+use frontend\models\Student;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use frontend\models\Book;
 /**
  * BorrowedbookController implements the CRUD actions for Borrowedbook model.
  */
@@ -79,13 +80,32 @@ class BorrowedbookController extends Controller
         ]);
     }
     
+
+    
+    
     public function bookUpdate($bookId){
         $command = \Yii::$app->db->createCommand('UPDATE book SET status=1 WHERE bookId='.$bookId);
         $command->execute();
         return true;
     }
     
-
+    public function actionApprove($studentId,$id){
+        $command = \Yii::$app->db->createCommand('UPDATE book SET status=1 WHERE bookId='.$id);
+        $command->execute();
+        $this->createNotification($studentId,$id);
+        return $this->redirect(['index']);
+    }
+    public function createNotification($studentId,$bookId){
+        $book = Book::find()->where(['bookId'=>$bookId])->one();
+        $icon= 'fa fa-book';
+        $userId = Student::find()->where(['student'=>$studentId])->one();
+        \Yii::$app->db->createCommand()->insert('notifications', [
+            'icon' => $icon,
+            'userId' => $userId->userId,
+            'message'=> 'Your request for book '.$book->bookName.' has been approved.'
+        ])->execute();
+        return true;
+    }
 
     /**
      * Updates an existing Borrowedbook model.

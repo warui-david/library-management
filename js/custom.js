@@ -38,7 +38,16 @@ $('.borrowbook').click(function(e){
         });
 	});
 		
-	
+$('.approvebook').click(function(e){
+			e.preventDefault();
+			var id = $(this).attr("val");
+			var studentId = $(this).attr("val2");
+	       $.get('approvebook?id='+id+'&studentId='+studentId,function(data){
+				$('#approvebook').modal('show')
+			 		.find('#approvebookContent')
+			 		.html(data);
+        });
+	});
 	
 	
 });

@@ -9,8 +9,7 @@ use frontend\models\Book;
 /* @var $model frontend\models\BorrowedBook */
 /* @var $form yii\widgets\ActiveForm */
 $students = ArrayHelper::map(Student::find()->all(), 'student', 'fullName');
-$books = ArrayHelper::map(Book::find()->all(), 'bookId', 'bookName');
-?>
+$books = ArrayHelper::map(Book::find()->where(['status'=>0])->all(), 'bookId', 'bookName');?>
 <div class="borrowed-book-form">
     <?php $form = ActiveForm::begin(['id' => 'bb-create']); ?>
     
