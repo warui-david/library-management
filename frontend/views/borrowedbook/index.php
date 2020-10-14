@@ -8,7 +8,7 @@ use frontend\models\Student;
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\BorrowedBookSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-$this->title = 'DAVID LMS';
+$this->title = 'DAVID WARUI LMS';
 $this->params['breadcrumbs'][] = $this->title;
 $totalBooks = Book::find()->asArray()->all();
 if(\Yii::$app->user->can('student')){
